@@ -18,12 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-        title: 'Firebase IoT Base',
+        title: 'LimpiaTIC',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
         darkTheme: ThemeData.dark(),
-        home: const MyHomePage(title: 'Flutter IoT App'),
+        home: const MyHomePage(title: 'LimpiaTIC'),
       );
 
   }
@@ -40,33 +40,35 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final textcontroller = TextEditingController();
-  final databaseRef = FirebaseDatabase.instance.ref().child("test");
+  final sucursal1 = FirebaseDatabase.instance.ref().child("test");
   String data = "";
   int _counter = 0;
   int flag = 0;
   Color _color_base = Colors.grey; //Variable de Cambio de color
 
   String Temperatura = "0";
+  String Humedad = "0";
 
 
-  /*MÉTODOS PARA USAR FIREBASE*/
+  /*MÉTODOS PARA USAR FIREBASE
   void addData() {
     if (flag == 0) {
-      databaseRef.set({'relay': "0"});
+      sucursal1.set({'relay': "0"});
       flag = 1;
     } else {
-      databaseRef.set({'relay': "1"});
+      sucursal1.set({'relay': "1"});
       flag = 0;
     }
   }
-
+  */
   //Imprimir desde firebase
   Future<void> PrintFromFirebase() async {
-    DatabaseEvent event = await databaseRef.once();
+    DatabaseEvent event = await sucursal1.once();
     print(event.snapshot.value);
   }
 
   DatabaseReference ref = FirebaseDatabase.instance.ref().child("test").child("temperatura");
+  DatabaseReference ref1 = FirebaseDatabase.instance.ref().child("test").child("humedad");
 
   /*****************************************************/
   @override
@@ -115,6 +117,15 @@ class _MyHomePageState extends State<MyHomePage> {
         Temperatura = event.snapshot.value.toString();
       });
     });
+    Stream<DatabaseEvent> stream1 = ref1.onValue;
+    stream1.listen((DatabaseEvent event) {
+      print("Event Type  ${event.type}");
+      print("Este es el valor que se cambio");
+      print('snapshot: ${event.snapshot.value}');
+      setState(() {
+        Humedad = event.snapshot.value.toString();
+      });
+    });
   }
 
   void _incrementCounter() {
@@ -136,66 +147,174 @@ class _MyHomePageState extends State<MyHomePage> {
       body:
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        //mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          IconButton(
-            onPressed: () {
-              setState(() {
-                if (_color_base == Colors.grey) {
-                  _color_base = Colors.yellow;
-                  print("Si es");
-                } else if (_color_base == Colors.yellow) {
-                  _color_base = Colors.grey;
-                  print("No es");
-                }
-                addData();
-              });
-            },
-            icon: Icon(
-              Icons.wb_incandescent_rounded,
-              color: _color_base,
-
-              //color: Colors.yellow,
-              size: 100.0,
-              semanticLabel: "Room Name",
+      Container (
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "Sucursal 1",
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-
-          const SizedBox(
-            height: 90,
-          ),
-          //const Text("Habitación"),
-
-          Center(
-            child: Text("Habitación "),
-          ),
-          const SizedBox(
-            height: 90,
-          ),
-          //const Text("Habitación"),
-
-          Center(
-            child: Text("Temperatura "),
-          ),
-
-          const SizedBox(
-            height: 50,
-          ),
-          //const Text("Habitación"),
-
-          Center(
-            child: Text(
-              Temperatura,
-              style: TextStyle(color: Colors.red,
-                  fontSize: 30),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Icon(
+                      Icons.thermostat_outlined,
+                      color: Color.fromARGB(255, 117, 168, 255),
+                      size: 80.0,
+                      semanticLabel: "Temperatura",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Temperatura"),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Temperatura,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 30,
+                ),
+                Column(
+                  children: [
+                    Icon(
+                      Icons.water_drop,
+                      color: Color.fromARGB(255, 117, 168, 255),
+                      size: 80.0,
+                      semanticLabel: "Humedad",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Humedad"),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Humedad,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                RaisedButton(
+                  child: Text("Cerrar"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
+            Text(
+              "Sucursal 2",
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Icon(
+                      Icons.thermostat_outlined,
+                      color: Color.fromARGB(255, 117, 168, 255),
+                      size: 80.0,
+                      semanticLabel: "Temperatura",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Temperatura"),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Temperatura,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 30,
+                ),
+                Column(
+                  children: [
+                    Icon(
+                      Icons.water_drop,
+                      color: Color.fromARGB(255, 117, 168, 255),
+                      size: 80.0,
+                      semanticLabel: "Humedad",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Humedad"),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Humedad,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                RaisedButton(
+                  child: Text("Cerrar"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
