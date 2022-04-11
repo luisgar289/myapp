@@ -40,35 +40,51 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final textcontroller = TextEditingController();
-  final sucursal1 = FirebaseDatabase.instance.ref().child("test");
+  final sensores = FirebaseDatabase.instance.ref().child("sensores");
+  final estado_s1 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal1");
+  final estado_s2 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal2");
+  
   String data = "";
   int _counter = 0;
-  int flag = 0;
-  Color _color_base = Colors.grey; //Variable de Cambio de color
+  String flag = "0";
+  Color _color_base = Colors.red; //Variable de Cambio de color
 
-  String Temperatura = "0";
-  String Humedad = "0";
+  String Temperatura_s1 = "0";
+  String Humedad_s1 = "0";
+  String Temperatura_s2 = "0";
+  String Humedad_s2 = "0";
 
 
-  /*MÉTODOS PARA USAR FIREBASE
   void addData() {
     if (flag == 0) {
-      sucursal1.set({'relay': "0"});
-      flag = 1;
+      estado_s1.set({'enfriamiento': "0"});
+      flag = "1";
     } else {
-      sucursal1.set({'relay': "1"});
-      flag = 0;
+      estado_s1.set({'enfriamiento': "1"});
+      flag = "0";
     }
   }
-  */
+  void addData2() {
+    if (flag == 0) {
+      estado_s1.set({'enfriamiento': "0"});
+      flag = "1";
+    } else {
+      estado_s1.set({'enfriamiento': "1"});
+      flag = "0";
+    }
+  }
+
+
   //Imprimir desde firebase
   Future<void> PrintFromFirebase() async {
-    DatabaseEvent event = await sucursal1.once();
+    DatabaseEvent event = await sensores.once();
     print(event.snapshot.value);
   }
 
-  DatabaseReference ref = FirebaseDatabase.instance.ref().child("test").child("temperatura");
-  DatabaseReference ref1 = FirebaseDatabase.instance.ref().child("test").child("humedad");
+  DatabaseReference t_s1 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal1").child("temperatura");
+  DatabaseReference h_s1 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal1").child("humedad");
+  DatabaseReference t_s2 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal2").child("temperatura");
+  DatabaseReference h_s2 = FirebaseDatabase.instance.ref().child("sensores").child("sucursal2").child("humedad");
 
   /*****************************************************/
   @override
@@ -108,22 +124,40 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     super.initState();
-    Stream<DatabaseEvent> stream = ref.onValue;
+    Stream<DatabaseEvent> stream = t_s1.onValue;
     stream.listen((DatabaseEvent event) {
       print("Event Type  ${event.type}");
       print("Este es el valor que se cambio");
       print('snapshot: ${event.snapshot.value}');
       setState(() {
-        Temperatura = event.snapshot.value.toString();
+        Temperatura_s1 = event.snapshot.value.toString();
       });
     });
-    Stream<DatabaseEvent> stream1 = ref1.onValue;
+    Stream<DatabaseEvent> stream1 = h_s1.onValue;
     stream1.listen((DatabaseEvent event) {
       print("Event Type  ${event.type}");
       print("Este es el valor que se cambio");
       print('snapshot: ${event.snapshot.value}');
       setState(() {
-        Humedad = event.snapshot.value.toString();
+        Humedad_s1 = event.snapshot.value.toString();
+      });
+    });
+    Stream<DatabaseEvent> stream2 = t_s2.onValue;
+    stream2.listen((DatabaseEvent event) {
+      print("Event Type  ${event.type}");
+      print("Este es el valor que se cambio");
+      print('snapshot: ${event.snapshot.value}');
+      setState(() {
+        Temperatura_s2 = event.snapshot.value.toString();
+      });
+    });
+    Stream<DatabaseEvent> stream3 = h_s2.onValue;
+    stream3.listen((DatabaseEvent event) {
+      print("Event Type  ${event.type}");
+      print("Este es el valor que se cambio");
+      print('snapshot: ${event.snapshot.value}');
+      setState(() {
+        Humedad_s2 = event.snapshot.value.toString();
       });
     });
   }
@@ -148,99 +182,18 @@ class _MyHomePageState extends State<MyHomePage> {
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
       Container (
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              "Sucursal 1",
+            Center(
+              child: Text("Sucursal 1",
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 50,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Icon(
-                      Icons.thermostat_outlined,
-                      color: Color.fromARGB(255, 117, 168, 255),
-                      size: 80.0,
-                      semanticLabel: "Temperatura",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text("Temperatura"),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text(
-                        Temperatura,
-                        style: TextStyle(color: Colors.red,
-                            fontSize: 30),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Column(
-                  children: [
-                    Icon(
-                      Icons.water_drop,
-                      color: Color.fromARGB(255, 117, 168, 255),
-                      size: 80.0,
-                      semanticLabel: "Humedad",
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text("Humedad"),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Center(
-                      child: Text(
-                        Humedad,
-                        style: TextStyle(color: Colors.red,
-                            fontSize: 30),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                RaisedButton(
-                  child: Text("Cerrar"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/');
-                  },
-                ),
-              ],
+              ),)
             ),
             const SizedBox(height: 40),
-            Text(
-              "Sucursal 2",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -248,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Icon(
                       Icons.thermostat_outlined,
-                      color: Color.fromARGB(255, 117, 168, 255),
+                      color: Color.fromARGB(255, 57, 129, 253),
                       size: 80.0,
                       semanticLabel: "Temperatura",
                     ),
@@ -256,14 +209,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 20,
                     ),
                     Center(
-                      child: Text("Temperatura"),
+                      child: Text("Temperatura",
+                      style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     Center(
                       child: Text(
-                        Temperatura,
+                        Temperatura_s1,
                         style: TextStyle(color: Colors.red,
                             fontSize: 30),
                       ),
@@ -271,13 +229,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 const SizedBox(
-                  width: 30,
+                  width: 80,
                 ),
                 Column(
                   children: [
                     Icon(
                       Icons.water_drop,
-                      color: Color.fromARGB(255, 117, 168, 255),
+                      color: Color.fromARGB(255, 88, 255, 241),
                       size: 80.0,
                       semanticLabel: "Humedad",
                     ),
@@ -285,14 +243,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 20,
                     ),
                     Center(
-                      child: Text("Humedad"),
+                      child: Text("Humedad",
+                      style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     Center(
                       child: Text(
-                        Humedad,
+                        Humedad_s1,
                         style: TextStyle(color: Colors.red,
                             fontSize: 30),
                       ),
@@ -301,16 +264,132 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                RaisedButton(
-                  child: Text("Cerrar"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/');
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  onPressed: (){
+                    setState((){
+                      if (_color_base == Colors.red){
+                        _color_base = Colors.green;
+                        print("Si es");
+                      }else if (_color_base == Colors.green){
+                        print("No es");
+                      }
+                      addData();
+                    });
                   },
+                  icon: Icon(
+                    Icons.power_settings_new,
+                    color : _color_base,
+                    size: 60.0,
+                    semanticLabel: "On/Off"
+                  )
+                )
+              ]
+            ),
+            const SizedBox(height: 150),
+            Center(
+              child: Text("Sucursal 2",
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              ),)
+            ),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Icon(
+                      Icons.thermostat_outlined,
+                      color: Color.fromARGB(255, 57, 129, 253),
+                      size: 80.0,
+                      semanticLabel: "Temperatura",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Temperatura",
+                      style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Temperatura_s2,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 80,
+                ),
+                Column(
+                  children: [
+                    Icon(
+                      Icons.water_drop,
+                      color: Color.fromARGB(255, 88, 255, 241),
+                      size: 80.0,
+                      semanticLabel: "Humedad",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text("Humedad",
+                      style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        Humedad_s2,
+                        style: TextStyle(color: Colors.red,
+                            fontSize: 30),
+                      ),
+                    ),
+                  ],
                 ),
               ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  onPressed: (){
+                    setState((){
+                      if (_color_base == Colors.red){
+                        _color_base = Colors.green;
+                        print("Si es");
+                      }else if (_color_base == Colors.green){
+                        print("No es");
+                      }
+                      addData2();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.power_settings_new,
+                    color : _color_base,
+                    size: 60.0,
+                    semanticLabel: "On/Off"
+                  )
+                )
+              ]
             ),
           ],
         ),
