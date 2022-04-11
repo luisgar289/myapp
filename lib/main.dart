@@ -46,8 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
   
   String data = "";
   int _counter = 0;
-  String flag = "0";
-  Color _color_base = Colors.red; //Variable de Cambio de color
+  String flag1 = "0";
+  String flag2 = "0";
+  Color _color_base1 = Colors.red; 
+  Color _color_base2 = Colors.red;
 
   String Temperatura_s1 = "0";
   String Humedad_s1 = "0";
@@ -56,21 +58,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   void addData() {
-    if (flag == 0) {
-      estado_s1.set({'enfriamiento': "0"});
-      flag = "1";
+    if (flag1 == "0") {
+      estado_s1.update({'enfriamiento': "1"});
+      flag1 = "1";
     } else {
-      estado_s1.set({'enfriamiento': "1"});
-      flag = "0";
+      estado_s1.update({'enfriamiento': "0"});
+      flag1 = "0";
     }
   }
+
   void addData2() {
-    if (flag == 0) {
-      estado_s1.set({'enfriamiento': "0"});
-      flag = "1";
+    if (flag2 == "0") {
+      estado_s2.update({'enfriamiento': "1"});
+      flag2 = "1";
     } else {
-      estado_s1.set({'enfriamiento': "1"});
-      flag = "0";
+      estado_s2.update({'enfriamiento': "0"});
+      flag2 = "0";
     }
   }
 
@@ -182,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // Center is a layout widget. It takes a single child and positions it
       // in the middle of the parent.
       Container (
-        padding: EdgeInsets.all(40),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -229,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 const SizedBox(
-                  width: 80,
+                  width: 60,
                 ),
                 Column(
                   children: [
@@ -270,25 +273,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   onPressed: (){
                     setState((){
-                      if (_color_base == Colors.red){
-                        _color_base = Colors.green;
-                        print("Si es");
-                      }else if (_color_base == Colors.green){
-                        print("No es");
+                      if (_color_base1 == Colors.red){
+                        _color_base1 = Colors.green;
+                        print("Encendido");
+                      }else if (_color_base1 == Colors.green){
+                        _color_base1 = Colors.red;
+                        print("Apagado");
                       }
                       addData();
                     });
                   },
                   icon: Icon(
                     Icons.power_settings_new,
-                    color : _color_base,
+                    color : _color_base1,
                     size: 60.0,
                     semanticLabel: "On/Off"
                   )
                 )
               ]
             ),
-            const SizedBox(height: 150),
+            const SizedBox(height: 80),
             Center(
               child: Text("Sucursal 2",
               style: TextStyle(
@@ -332,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 const SizedBox(
-                  width: 80,
+                  width: 60,
                 ),
                 Column(
                   children: [
@@ -373,18 +377,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   onPressed: (){
                     setState((){
-                      if (_color_base == Colors.red){
-                        _color_base = Colors.green;
-                        print("Si es");
-                      }else if (_color_base == Colors.green){
-                        print("No es");
+                      if (_color_base2 == Colors.red){
+                        _color_base2 = Colors.green;
+                        print("Encendido");
+                      }else if (_color_base2 == Colors.green){
+                        _color_base2 = Colors.red;
+                        print("Apagado");
                       }
                       addData2();
                     });
                   },
                   icon: Icon(
                     Icons.power_settings_new,
-                    color : _color_base,
+                    color : _color_base2,
                     size: 60.0,
                     semanticLabel: "On/Off"
                   )
